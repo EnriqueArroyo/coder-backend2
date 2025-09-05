@@ -1,6 +1,6 @@
 export const isSelfOrAdmin = () => {
   return (req, res, next) => {
-    const requester = req.user; // inyectado por requireAuth
+    const requester = req.user; 
     const targetUserId = req.params.uid;
 
     if (!requester) {
@@ -13,5 +13,16 @@ export const isSelfOrAdmin = () => {
     if (isAdmin || isSelf) return next();
 
     return res.status(403).send({ status: "error", message: "Prohibido" });
+  };
+};
+
+export const isCartOwner = () => {
+  return (req, res, next) => {
+    const userCart = req.user?.cart?.toString?.();
+    const cid = req.params.cid;
+    if (!userCart || userCart !== cid) {
+      return res.status(403).send({ status: 'error', message: 'Forbidden (cart owner required)' });
+    }
+    next();
   };
 };
